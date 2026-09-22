@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20260922-snooze-date" />
-  <link rel="stylesheet" href="toolbar-layout.css?v=20260922-1" />
+  <link rel="stylesheet" href="style.css?v=20260922-card-schedule" />
+  <link rel="stylesheet" href="toolbar-layout.css?v=20260922-filter-grid-live" />
   <link rel="stylesheet" href="review.css?v=20260921-16" />
 </head>
 <body>
@@ -223,6 +223,9 @@
             </button>
             <button class="filter-btn" data-filter="snoozed" id="filter-snoozed">
               <span class="filter-icon">💤</span> Snoozed <span class="filter-count">0</span>
+            </button>
+            <button class="filter-btn" data-filter="scheduled" id="filter-scheduled">
+              <span class="filter-icon">🕒</span> Scheduled <span class="filter-count">0</span>
             </button>
           </div>
           <label class="select-all-drafts hidden" id="select-all-drafts">
@@ -483,7 +486,7 @@
   <div class="toast-popup" id="toast-popup"></div>
 
   <script src="security.js?v=20260921-16"></script>
-  <script src="app.js?v=20260922-snooze-date"></script>
+  <script src="app.js?v=20260922-card-schedule"></script>
   <script src="review.js?v=20260921-16"></script>
 </body>
 </html>
