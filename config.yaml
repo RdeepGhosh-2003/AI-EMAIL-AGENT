@@ -1,0 +1,48 @@
+ai:
+  model: openrouter
+  openrouter_model: google/gemini-2.5-flash
+  openai_model: gpt-4o
+  gemini_model: gemini-3.6-flash
+  claude_model: claude-3-5-sonnet-20241022
+  temperature: 0.7
+  max_reply_tokens: 2048
+platforms:
+  outlook: true
+agent:
+  check_interval_seconds: 30
+  draft_mode: true
+  max_emails_per_check: 10
+  auto_approve: false
+  sound_fx: true
+  pin_security: true
+  theme: slate
+  retry_max_attempts: 3
+  snooze_enabled: true
+  vip_contacts:
+  - sarah.jenkins@acmecorp.com
+  - '*@boardroom.co'
+user_style:
+  tone: professional
+  name: ''
+  signature: ''
+  avoid_phrases:
+  - I hope this email finds you well
+  - As per my last email
+  - Per my previous message
+  - Going forward
+  instructions: ''
+filters:
+  skip_categories:
+  - newsletter
+  - spam
+  - promotional
+  skip_senders_containing:
+  - noreply
+  - no-reply
+  - donotreply
+  - notifications
+  - mailer-daemon
+dashboard:
+  host: 127.0.0.1
+  port: 5001
+  auto_refresh_seconds: 30
