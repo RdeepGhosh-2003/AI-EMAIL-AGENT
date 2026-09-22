@@ -157,3 +157,18 @@ select { color: var(--text-primary); background: var(--bg-input); border: 1px so
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition: none !important; scroll-behavior: auto !important; }
 }
+.signature-status {
+  margin: 0 12px 12px;
+  padding: 9px 11px;
+  border: 1px solid rgba(48, 209, 88, .35);
+  border-radius: 8px;
+  color: #7ee2a8;
+  background: rgba(48, 209, 88, .07);
+  font-size: 12px;
+}
+
+.signature-status.warning {
+  border-color: rgba(255, 184, 0, .35);
+  color: #ffd36a;
+  background: rgba(255, 184, 0, .07);
+}

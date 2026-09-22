@@ -161,7 +161,7 @@ def build():
     rows = (
         ("Computer", "Windows 10 or Windows 11 with internet access"),
         ("Python", "Python 3.11 or newer installed from python.org with Add Python to PATH selected"),
-        ("AI service", "An API key for one supported provider; the current shared configuration selects Google Gemini"),
+        ("AI service", "An API key for one supported provider; the current shared configuration selects OpenRouter"),
         ("Email account", "A Microsoft Outlook or Microsoft 365 mailbox"),
         ("Permission", "Ability to approve mailbox access; work accounts may require an administrator"),
     )
@@ -192,10 +192,14 @@ def build():
 
     doc.add_heading("Configure the AI provider", level=1)
     add_step(doc, "Open Agent Settings", "Select the AI and Writing tab.")
-    add_step(doc, "Choose a provider", "Select Google Gemini, OpenAI, or Anthropic as the AI engine.")
+    add_step(doc, "Choose a provider", "Select OpenRouter, Google Gemini, OpenAI, or Anthropic as the AI engine.")
     add_step(doc, "Paste the API key", "Paste the matching provider key and save Settings. The key is stored only in the local .env file and is not displayed again.")
-    add_body(doc, "The current configuration uses Google Gemini with the gemini-3.6-flash model. OpenAI and Anthropic settings remain available, but the app will use only the provider selected in Settings.")
+    add_body(doc, "The current configuration uses OpenRouter with the google/gemini-2.5-flash model slug. OpenAI, direct Google Gemini, and Anthropic settings remain available, and the app can fall back to another configured provider if the preferred provider is unavailable.")
     add_body(doc, "Use a separate API key for each recipient when possible. This makes usage easier to audit and lets one person's key be revoked without affecting everyone else.")
+
+    doc.add_heading("Use the Outlook reply signature", level=1)
+    add_body(doc, "When a matching Classic Outlook reply signature exists on the computer, the app appends that signature to provider drafts and includes its inline images. The dashboard shows whether a matching signature was found for the connected mailbox.")
+    add_body(doc, "Create the reply signature in Classic Outlook for the same mailbox used by this app. If no matching signature exists, replies are still drafted and sent, but they are sent without a signature footer.")
 
     doc.add_heading("Connect Microsoft Outlook", level=1)
     add_body(doc, "Microsoft requires a public desktop application registration. The application client ID is not a password, so the project owner may provide a suitable multi-tenant client ID to recipients. Each recipient still signs in and consents for their own mailbox.")
@@ -206,7 +210,6 @@ def build():
     add_step(doc, "Connect Microsoft", "Select Connect Microsoft and complete the Microsoft sign-in and consent page. The authorization cache remains only on that computer.")
 
     permissions_heading = doc.add_heading("Permissions and privacy", level=1)
-    permissions_heading.paragraph_format.page_break_before = True
     permissions = doc.add_table(rows=1, cols=2)
     for index, text in enumerate(("Permission", "Why it is used")):
         cell = permissions.rows[0].cells[index]

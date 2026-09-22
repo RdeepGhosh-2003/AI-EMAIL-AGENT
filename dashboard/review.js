@@ -71,6 +71,28 @@ window.restoreReviewFocus = () => {
 const recipientLine = document.createElement('div');
 recipientLine.className = 'recipient-line';
 $modalFrom.after(recipientLine);
+const signatureLine = document.createElement('div');
+signatureLine.className = 'signature-status';
+signatureLine.setAttribute('role', 'status');
+$modalReply.after(signatureLine);
+async function refreshSignatureStatus() {
+  signatureLine.textContent = 'Checking Outlook signature…';
+  signatureLine.classList.remove('warning');
+  try {
+    const response = await fetch(`${API}/accounts/outlook/signature`);
+    const status = await response.json();
+    if (!response.ok) throw new Error(status.error || 'Unavailable');
+    if (status.available) {
+      signatureLine.textContent = `✓ Outlook signature for ${status.account} will be appended when saved or sent.`;
+    } else {
+      signatureLine.textContent = `⚠ No Classic Outlook reply signature matches ${status.account || 'the connected mailbox'}; this email will be sent without a footer.`;
+      signatureLine.classList.add('warning');
+    }
+  } catch (_) {
+    signatureLine.textContent = '⚠ Outlook signature status could not be checked.';
+    signatureLine.classList.add('warning');
+  }
+}
 const loadOriginal = document.createElement('button');
 loadOriginal.type = 'button';
 loadOriginal.textContent = 'Load full original';
@@ -208,6 +230,7 @@ window.enhanceReview = draft => {
   attachmentPanel.hidden = !pending && !(draft.links?.length || draft.attachments?.length);
   resourceComposer.classList.add('hidden');
   renderAttachments(draft);
+  refreshSignatureStatus();
   $modalClose.focus();
 };
 const undoRestoreButton = document.createElement('button');

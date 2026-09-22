@@ -415,6 +415,16 @@ def account_status():
     return jsonify(account_connection_status())
 
 
+@app.get("/api/accounts/outlook/signature")
+def outlook_signature_status():
+    try:
+        from outlook.signature import cached_signature_status
+        return jsonify(cached_signature_status())
+    except Exception as error:
+        app.logger.warning("Could not inspect Outlook signature: %s", error)
+        return jsonify(available=False, account="", name="", error="Signature status is unavailable"), 503
+
+
 @app.post("/api/accounts/outlook/config")
 def save_outlook_config():
     data = request.get_json(silent=True) or {}

@@ -1,8 +1,8 @@
 # AI Email Agent Failure Register
 
-Updated 21 September 2026
+Updated 22 September 2026
 
-This register records 24 findings from the dashboard audit and the repair work on 18 September 2026, with a current file and test review refreshed on 21 September 2026. It preserves symptoms, corrections and verification evidence for future maintenance. The updated app is configured for Outlook and Google Gemini, PIN protection is enabled, automatic sending remains off, and the limits below remain explicit.
+This register records 24 findings from the dashboard audit and the repair work on 18 September 2026, with a current file and test review refreshed on 22 September 2026. It preserves symptoms, corrections and verification evidence for future maintenance. The updated app is configured for Outlook and OpenRouter using google/gemini-2.5-flash, PIN protection is enabled, automatic sending remains off, Classic Outlook reply signatures are supported, and the limits below remain explicit.
 
 ## F01 Send falsely reported success
 
@@ -248,19 +248,23 @@ This register records 24 findings from the dashboard audit and the repair work o
 
 ### Current automated verification
 
-On 21 September 2026, .venv\Scripts\python.exe -m unittest discover -s tests -v ran 22 tests successfully. JavaScript and dashboard checks should be rerun when frontend behavior changes. Provider sends, deletes and AI rewrites in tests use mocks and temporary data.
+On 22 September 2026, .venv\Scripts\python.exe -m unittest discover -s tests -v ran 32 tests successfully. JavaScript syntax checks passed for dashboard review and app scripts. Provider sends, deletes, signature uploads and AI rewrites in tests use mocks and temporary data.
 
 ### Historical dashboard verification
 
-The earlier repair record reported 27 isolated diagnostic API checks passing after an audit baseline of 21 passes and six failures. The generated dashboard-fix-results.json file is not present in the current workspace, so that evidence is retained as historical rather than current rerun evidence.
+The earlier repair record reported 27 isolated diagnostic API checks passing after an audit baseline of 21 passes and six failures. Those dashboard-audit artifacts were removed during the later workspace cleanup, so this line remains historical context rather than current rerun evidence.
 
 ### Current configuration review
 
-config.yaml currently enables Outlook, selects Google Gemini with gemini-3.6-flash, enables PIN security, enables sound and snooze behavior, keeps automatic sending disabled, and listens on 127.0.0.1:5001.
+config.yaml currently enables Outlook, selects OpenRouter with google/gemini-2.5-flash, enables PIN security, enables sound and snooze behavior, keeps automatic sending disabled, and listens on 127.0.0.1:5001.
+
+### Current signature support
+
+The app now detects a matching Classic Outlook reply signature for the connected mailbox, appends it to Outlook draft HTML, attaches inline signature images by content ID, and shows signature status in the review UI. Tests cover account matching, image rewriting, escaped reply composition and duplicate inline-image prevention.
 
 ### Live verification still required
 
-Outlook mailbox polling, provider draft synchronization against a real mailbox, native file chooser behavior and audible chimes still need live-account verification after sign-in. Passing tests verify the exercised behavior, not every possible provider or message.
+Outlook mailbox polling, provider draft synchronization against a real mailbox, real Classic Outlook signature discovery, native file chooser behavior and audible chimes still need live-account verification after sign-in. Passing tests verify the exercised behavior, not every possible provider or message.
 
 ### Browser verification
 
@@ -272,8 +276,8 @@ No real email was sent or deleted for QA. Outlook delivery and mailbox paginatio
 
 ### Repeatable checks
 
-Run .venv\Scripts\python.exe -m unittest discover -s tests -v. If the dashboard diagnostic script is restored or available in the workspace, run it after frontend changes and keep the generated JSON with the audit record.
+Run .venv\Scripts\python.exe -m unittest discover -s tests -v. Also run JavaScript syntax checks for changed dashboard scripts. If a dashboard diagnostic script is restored later, run it after frontend changes and keep the generated JSON with the audit record.
 
 ### Evidence and maintenance
 
-Keep DASHBOARD_AUDIT.md and dashboard-audit-results.json as the original baseline. Use FAILURE_REGISTER.md and this document as the repair record. Future entries should retain an ID, severity, reproduction, expected/actual behavior, fix, verification and remaining limitation.
+Use FAILURE_REGISTER.md and AI_Email_Agent_Failure_Register.docx as the repair record. Future entries should retain an ID, severity, reproduction, expected/actual behavior, fix, verification and remaining limitation. The old dashboard-audit baseline files are no longer present in this cleaned workspace.

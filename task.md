@@ -14,6 +14,7 @@
 - [x] `api/server.py` — Record style diff on edit, clean compile & verified
 
 ## Phase 3: Verification
-- [x] Run python -c "import agent, classifier, ai_engine, storage" to check no import errors
-- [x] Ran 40 unit and regression tests in test suite (100% OK)
-- [x] Ran full QA dashboard audit (100% PASS on all 27 checks)
+- [x] Ran `python -c "import agent, classifier, ai_engine, storage"` to check core import health
+- [x] Ran 32 current unit and regression tests in the test suite on 22 September 2026 (100% OK)
+- [x] Ran JavaScript syntax checks for the active dashboard scripts
+- [x] Historical dashboard audit evidence was removed during cleanup; rerun a dashboard audit only if that diagnostic script is restored

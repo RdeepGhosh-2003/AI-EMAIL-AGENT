@@ -38,6 +38,8 @@ The main page is a reply-draft queue, not a complete mailbox. It processes unrea
 
 PIN protection is enabled in the current local configuration. Unlock the dashboard before viewing drafts or changing settings. Automatic sending is off unless you explicitly enable it.
 
+When a matching Classic Outlook reply signature exists on this Windows profile, the app appends it to Outlook drafts and includes inline signature images. The review window shows whether a signature match was found for the connected mailbox.
+
 ## Sharing
 
 Double-click `Create_Sharing_Package` and send the generated `AI-Email-Agent-Share.zip`. The package excludes `.env`, Outlook authorization tokens, email data, logs, and the local virtual environment. The recipient connects their own Microsoft account after installation.
