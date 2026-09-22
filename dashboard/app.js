@@ -136,8 +136,19 @@ function isDraftSnoozed(draft) {
   return Number.isFinite(until) && until > Date.now();
 }
 
+function scheduledSendTime(draft) {
+  return draft?.scheduled_send_at || draft?.scheduled_for || draft?.send_at || '';
+}
+
+function isDraftScheduled(draft) {
+  if (draft?.status === 'scheduled') return true;
+  if (draft?.status !== 'pending') return false;
+  const scheduledAt = new Date(scheduledSendTime(draft)).getTime();
+  return Number.isFinite(scheduledAt) && scheduledAt > Date.now();
+}
+
 function visibleDrafts() {
-  return allDrafts.filter(draft => !isDraftSnoozed(draft));
+  return allDrafts.filter(draft => !isDraftSnoozed(draft) && !isDraftScheduled(draft));
 }
 
 function escHtml(str = '') {
@@ -530,7 +541,7 @@ function updateDateFilterUi() {
   if (rangeInputs) rangeInputs.classList.toggle('hidden', dateFilterMode !== 'range');
   const help = document.getElementById('date-filter-help');
   if (help) {
-    const statusLabel = ({approved:'sent',rejected:'discarded',deleted:'deleted',snoozed:'snoozed'})[currentFilter] || 'created';
+    const statusLabel = ({approved:'sent',rejected:'discarded',deleted:'deleted',snoozed:'snoozed',scheduled:'scheduled'})[currentFilter] || 'created';
     help.textContent = dateFilterMode === 'today'
       ? `Today's ${statusLabel} drafts`
       : dateFilterMode === 'range'
@@ -624,6 +635,8 @@ function updateFilterCounts(data = {}) {
     const drafts = visibleDrafts();
     const value = filter === 'snoozed'
       ? allDrafts.filter(draft => isDraftSnoozed(draft) && matchesSearch(draft) && matchesSelectedDate(draft, 'pending')).length
+      : filter === 'scheduled'
+      ? allDrafts.filter(draft => isDraftScheduled(draft) && matchesSearch(draft) && matchesSelectedDate(draft, 'pending')).length
       : filter === 'all'
       ? drafts.filter(draft => matchesSearch(draft) && matchesSelectedDate(draft)).length
       : drafts.filter(draft => draft.status === filter && matchesSearch(draft) && matchesSelectedDate(draft, filter)).length;
@@ -632,16 +645,19 @@ function updateFilterCounts(data = {}) {
 }
 
 function getFilteredDrafts() {
-  const sourceDrafts = currentFilter === 'snoozed' ? allDrafts : visibleDrafts();
+  const sourceDrafts = ['snoozed', 'scheduled'].includes(currentFilter) ? allDrafts : visibleDrafts();
   return sourceDrafts.filter(d => {
     const matchFilter = currentFilter === 'snoozed'
       ? d.status === 'pending'
+      : currentFilter === 'scheduled'
+      ? d.status === 'pending' || d.status === 'scheduled'
       : overviewFilter ? d.status !== 'deleted' : currentFilter === 'all' || d.status === currentFilter;
     const matchSnoozed = currentFilter === 'snoozed' ? isDraftSnoozed(d) : true;
+    const matchScheduled = currentFilter === 'scheduled' ? isDraftScheduled(d) : true;
     const matchOverview = !overviewFilter || (overviewFilter.kind === 'priority'
       ? getPriorityGroup(d) === overviewFilter.value
       : getEmailType(d) === overviewFilter.value);
-    return matchFilter && matchSnoozed && matchOverview && matchesSearch(d) && matchesSelectedDate(d);
+    return matchFilter && matchSnoozed && matchScheduled && matchOverview && matchesSearch(d) && matchesSelectedDate(d);
   });
 }
 
@@ -705,7 +721,7 @@ function clearActiveFilter(type) {
 function renderActiveFilters(resultCount = 0, totalCount = 0) {
   if (!$activeFilterRow) return;
   const chips = [];
-  const statusLabels = { pending: 'Pending', approved: 'Sent', rejected: 'Discarded', deleted: 'Deleted', snoozed: 'Snoozed', all: 'All' };
+  const statusLabels = { pending: 'Pending', approved: 'Sent', rejected: 'Discarded', deleted: 'Deleted', snoozed: 'Snoozed', scheduled: 'Scheduled', all: 'All' };
   if (!overviewFilter && currentFilter !== 'pending') chips.push({ type: 'status', label: statusLabels[currentFilter] || currentFilter });
   if (overviewFilter) {
     const overviewLabels = {
@@ -808,7 +824,11 @@ function renderDrafts() {
   document.querySelectorAll('.draft-card, .date-group-heading').forEach(el => el.remove());
 
   const total = drafts.length;
-  const totalAvailable = currentFilter === 'snoozed' ? allDrafts.filter(isDraftSnoozed).length : visibleDrafts().length;
+  const totalAvailable = currentFilter === 'snoozed'
+    ? allDrafts.filter(isDraftSnoozed).length
+    : currentFilter === 'scheduled'
+    ? allDrafts.filter(isDraftScheduled).length
+    : visibleDrafts().length;
   renderActiveFilters(total, totalAvailable);
   updateSelectAllControl(drafts);
   const overviewLabels = {
@@ -816,7 +836,7 @@ function renderDrafts() {
     customerSupplier: 'Customer / supplier issues', payments: 'Payments', invoices: 'Invoices',
     legal: 'Legal matters', keyContacts: 'Key contacts',
   };
-  const filterLabels = { pending: 'pending', approved: 'sent', rejected: 'discarded', deleted: 'deleted', snoozed: 'snoozed' };
+  const filterLabels = { pending: 'pending', approved: 'sent', rejected: 'discarded', deleted: 'deleted', snoozed: 'snoozed', scheduled: 'scheduled' };
   const activeLabel = overviewFilter ? overviewLabels[overviewFilter.value] : (filterLabels[currentFilter] || currentFilter);
   $inboxSub.textContent = `${total} draft${total !== 1 ? 's' : ''} · ${activeLabel}`;
   const selectedDate = getDateFilterLabel();
@@ -874,6 +894,7 @@ function renderDrafts() {
         : '',
       draft.edited ? makeBadge('✏️ edited', 'badge-edited') : '',
       draft.snoozed_until ? '<span class="badge badge-category">💤 Snoozed</span>' : '',
+      isDraftScheduled(draft) ? `<span class="badge badge-category">🕒 Scheduled${scheduledSendTime(draft) ? ` ${escHtml(formatDateTime(scheduledSendTime(draft)))}` : ''}</span>` : '',
     ].filter(Boolean).join('');
 
     card.innerHTML = `
@@ -898,6 +919,7 @@ function renderDrafts() {
           </div>` : ''}
           ${isDraftSnoozed(draft) ? `<span class="card-undo" data-undo-action="snooze" role="button" tabindex="0">↶ Undo snooze</span>` : ''}
           ${['rejected', 'deleted'].includes(draft.status) ? `<span class="card-undo" data-undo-action="restore" role="button" tabindex="0">↶ ${draft.status === 'deleted' ? 'Undo delete' : 'Undo rejection'}</span>` : ''}
+          ${!['approved', 'deleted'].includes(draft.status) ? `<button type="button" class="schedule-card-btn" onclick="event.stopPropagation(); window.location.href='schedule-send-preview.html'">🕒 Schedule</button>` : ''}
           <span class="review-link">Review reply →</span>
           <span class="card-time">${timeAgo(draft.status === 'approved' ? draft.approved_at : draft.status === 'rejected' ? draft.rejected_at : draft.status === 'deleted' ? draft.deleted_at : draft.created_at)}</span>
         </div>
