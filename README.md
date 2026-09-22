@@ -12,7 +12,9 @@ This local Windows app monitors unread Outlook email, generates contextual reply
 
 ## Start the app
 
-Double-click `Open_Dashboard`. The first launch creates the virtual environment and installs dependencies. Later launches start the background agent if necessary and open the dashboard.
+After extracting the ZIP, double-click `Install_AI_Email_Agent` once. It automatically downloads the official per-user Python installer when Python is missing, creates the private environment, installs all required components, and opens the dashboard. Internet access is required during this first setup. Administrator access is normally not required.
+
+After setup, double-click `Open_Dashboard`. It starts the background agent if necessary and opens the dashboard. If somebody skips the installer, `Open_Dashboard` automatically starts the same setup when required.
 
 Closing the browser does not stop the agent. Double-click `Open_Dashboard` to reopen it. Use **Stop Agent** in the dashboard when monitoring should end.
 
@@ -42,7 +44,7 @@ When a matching Classic Outlook reply signature exists on this Windows profile, 
 
 ## Sharing
 
-Double-click `Create_Sharing_Package` and send the generated `AI-Email-Agent-Share.zip`. The package excludes `.env`, Outlook authorization tokens, email data, logs, and the local virtual environment. The recipient connects their own Microsoft account after installation.
+Double-click `Create_Sharing_Package` and send the generated `AI-Email-Agent-Share.zip`. The recipient extracts the ZIP and double-clicks `Install_AI_Email_Agent`; Python and all application components are handled automatically. The package excludes `.env`, Outlook authorization tokens, email data, logs, signatures, and the local virtual environment. The recipient connects their own Microsoft account after installation.
 
 ## Private files
 
@@ -57,7 +59,7 @@ Never share or commit:
 
 | Problem | Resolution |
 |---|---|
-| Dashboard does not open | Allow the first-run dependency installation to finish, then launch again. |
+| Dashboard does not open | Extract the complete ZIP, run `Install_AI_Email_Agent`, and allow the first-run download to finish. See `setup.log` if it fails. |
 | Connect Microsoft is disabled | Save a valid Microsoft Application client ID first. |
 | Microsoft requests administrator approval | Ask the organization's Microsoft 365 administrator to approve `Mail.ReadWrite` and `Mail.Send`. |
 | Main dashboard is empty | New reply drafts are created only from unread messages that need responses. Check **Mailbox** for all recent messages. |

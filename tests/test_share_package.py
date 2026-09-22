@@ -9,7 +9,7 @@ class SharePackageTests(unittest.TestCase):
             self.assertFalse(create_share_package.should_include(create_share_package.ROOT / Path(name)),name)
 
     def test_outlook_app_files_are_included(self):
-        for name in ("AI_Email_Agent_Setup_Guide.docx","Open_Dashboard.vbs","requirements.txt","outlook/auth.py","openrouter_client.py"):
+        for name in ("AI_Email_Agent_Setup_Guide.docx","Install_AI_Email_Agent.vbs","scripts/setup.ps1","Open_Dashboard.vbs","requirements.txt","outlook/auth.py","openrouter_client.py"):
             self.assertTrue(create_share_package.should_include(create_share_package.ROOT / name),name)
 
 

@@ -13,7 +13,7 @@ ALLOWED_ROOT_FILES = {
     ".env.example", ".gitignore", "activity_log.py", "agent.py", "ai_engine.py",
     "check_agent_status.bat", "classifier.py", "config.yaml", "connect_email.py",
     "create_share_package.py",
-    "Create_Sharing_Package.vbs", "delivery.py", "gemini_client.py",
+    "Create_Sharing_Package.vbs", "Install_AI_Email_Agent.vbs", "delivery.py", "gemini_client.py",
     "install_autostart.bat", "install_startup_task.bat", "instance_lock.py", "launch_dashboard.py",
     "mailbox_errors.py", "openrouter_client.py", "Open_Dashboard.vbs", "README.md", "requirements.txt",
     "remove_startup_task.bat", "run_silent.vbs", "run.py", "security.py", "start.bat",
