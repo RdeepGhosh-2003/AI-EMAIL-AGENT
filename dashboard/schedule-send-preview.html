@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schedule Send Preview</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080c14;color:#e8eef8;font:14px Inter,system-ui,sans-serif}button,input{font:inherit}button{cursor:pointer}.shell{min-height:100vh;display:grid;grid-template-columns:300px 1fr}.side{background:#101722;border-right:1px solid #22324b;padding:22px}.brand{display:flex;gap:12px;align-items:center;margin-bottom:28px}.bot{font-size:30px}.brand strong{display:block;font-size:16px}.brand span,.muted{color:#94a3b8}.panel-title{font-size:12px;color:#93b4e6;text-transform:uppercase;letter-spacing:.08em;margin:22px 0 10px}.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mini{border:1px solid #243b5c;border-radius:8px;background:#0e1a2c;padding:10px 12px;display:flex;justify-content:space-between;color:#bcd1eb}.mini.scheduled{border-color:#0ea5e9;color:#67e8f9}.feed{display:grid;gap:12px;color:#aac0dc;font-size:12px}.feed b{color:#fff}.main{min-width:0;padding:22px 26px 40px;background:linear-gradient(180deg,#070c13,#080b13 55%,#0b0a15)}.top{display:flex;justify-content:space-between;gap:18px;border-bottom:1px solid #1d2a3f;padding-bottom:16px}.title h1{margin:0;font-size:30px;line-height:1}.title p{margin:6px 0 0;color:#a9b7ca}.metrics{display:flex;gap:10px;align-items:center}.metric{min-width:130px;border:1px solid #203756;border-radius:8px;background:#0b1627;padding:9px 14px}.metric small{display:block;color:#8396b1;font-weight:700;letter-spacing:.06em}.metric b{font-size:22px}.toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:22px 0 18px;border-bottom:1px solid #1d2a3f}.label{font-weight:800;letter-spacing:.04em}.filters{display:flex;gap:10px;flex-wrap:wrap}.pill{display:inline-flex;align-items:center;gap:8px;height:34px;border:1px solid transparent;border-radius:8px;background:transparent;color:#bcd1eb;padding:0 12px;font-weight:700}.pill.active{background:#3a2606;border-color:#a16207;color:#ffd166}.pill.scheduled{color:#22d3ee}.pill.scheduled.active{background:#073142;border-color:#0891b2}.tools{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}.tool{height:36px;border:1px solid #263c5d;border-radius:8px;background:#17243a;color:#dbe8fb;padding:0 13px}.search{min-width:240px}.active-row{display:flex;gap:10px;align-items:center;padding:14px 0 20px;color:#96b5df;text-transform:uppercase;font-size:12px;font-weight:800;letter-spacing:.08em}.count{border:1px solid #29446c;background:#112039;border-radius:20px;padding:6px 12px;color:#d7e7ff;text-transform:none;letter-spacing:0}.card{position:relative;border:1px solid #20334f;background:#111827;border-radius:10px;margin-bottom:14px;padding:18px 20px 16px 20px;box-shadow:0 10px 30px rgba(0,0,0,.18)}.card:before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 5px 5px 0;background:#f43f5e}.card.medium:before{background:#f59e0b}.card-head{display:flex;align-items:flex-start;gap:12px}.badges{display:flex;gap:8px;flex-wrap:wrap}.badge{display:inline-flex;align-items:center;gap:5px;border:1px solid #334155;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:800;color:#c7d2fe;background:#172033}.badge.high{color:#ff7a89;background:#30161f;border-color:#6d2432}.badge.med{color:#facc15;background:#30250c;border-color:#6c4b0d}.badge.schedule{color:#67e8f9;background:#073142;border-color:#0891b2}.actions{margin-left:auto;display:flex;gap:10px;align-items:flex-start}.btn{height:38px;border:1px solid #2f4b72;border-radius:8px;background:#173052;color:#bfe4ff;padding:0 13px;font-weight:800}.primary{background:#21406f;border-color:#5e83c5;color:#eef6ff}.send{background:#0f5138;border-color:#10b981;color:#b7f7d8}.danger{background:#451b1b;border-color:#ef4444;color:#ffb4b4}.schedule-wrap{position:relative}.popover{display:none;position:absolute;right:0;top:46px;z-index:5;width:292px;border:1px solid #2b4569;border-radius:12px;background:#0b1525;padding:12px;box-shadow:0 22px 60px rgba(0,0,0,.55)}.popover.open{display:block}.popover label{display:block;margin-bottom:8px;font-weight:800;color:#dbeafe}.date-input{width:100%;height:38px;border:1px solid #365173;border-radius:8px;background:#142139;color:#f8fafc;padding:0 10px;color-scheme:dark}.quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.quick button,.pop-actions button{border:1px solid #2d4668;background:#13243b;color:#c9dbf1;border-radius:8px;padding:8px}.pop-actions{display:flex;justify-content:flex-end;gap:8px}.pop-actions .confirm{background:#0e7490;border-color:#22d3ee;color:#e0fbff;font-weight:800}.subject{margin:16px 0 6px;font-size:16px;font-weight:800}.from{color:#98a9bf;margin-bottom:14px}.row{display:grid;grid-template-columns:110px 1fr;gap:12px;margin:10px 0}.row b{color:#3b82f6;text-transform:uppercase;font-size:12px;letter-spacing:.06em}.row span{color:#cad6e6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.confidence{display:flex;align-items:center;gap:8px;color:#91a4bc;font-size:12px}.bar{height:3px;background:#243044;flex:1;border-radius:9px;overflow:hidden}.bar i{display:block;width:68%;height:100%;background:#fb7185}.note{margin-top:18px;border:1px solid #284667;border-radius:10px;background:#0e1a2c;padding:14px 16px;color:#b5c6dc;line-height:1.5}.preview{position:fixed;right:16px;bottom:14px;padding:8px 11px;border:1px solid #7c3aed;border-radius:8px;background:#1d1732;color:#ddd6fe;font-size:11px;font-weight:800}.toast{position:fixed;right:18px;top:18px;max-width:360px;border:1px solid #0891b2;border-radius:10px;background:#052c3a;color:#dffcff;padding:12px 14px;box-shadow:0 16px 40px rgba(0,0,0,.4);display:none}.toast.show{display:block}.hidden{display:none}@media(max-width:1100px){.shell{grid-template-columns:1fr}.side{display:none}.top{flex-direction:column}.metrics,.toolbar,.tools{justify-content:flex-start}.tools{margin-left:0}.row{grid-template-columns:1fr}.row span{white-space:normal}.actions{width:100%;margin-left:0;justify-content:flex-start;flex-wrap:wrap}.card-head{flex-wrap:wrap}.popover{left:0;right:auto}.search{min-width:170px;flex:1}}@media(max-width:620px){.main{padding:18px 14px}.metrics{flex-wrap:wrap}.metric{flex:1 1 135px}.pill span.text{display:none}.tool.search{width:100%;min-width:0}.quick{grid-template-columns:1fr}.popover{width:min(292px,calc(100vw - 44px))}}
+</style>
+<body>
+<div class="toast" id="toast"></div>
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><span class="bot">🤖</span><div><strong>AI Email Agent</strong><span>Draft Review</span></div></div>
+    <div class="panel-title">All Drafts</div>
+    <div class="mini-grid">
+      <div class="mini"><span>⏳ Pending</span><b id="side-pending">2</b></div>
+      <div class="mini"><span>✅ Sent</span><b>0</b></div>
+      <div class="mini scheduled"><span>🕒 Scheduled</span><b id="side-scheduled">0</b></div>
+      <div class="mini"><span>🗃️ Deleted</span><b>0</b></div>
+    </div>
+    <div class="panel-title">Activity Log</div>
+    <div class="feed" id="feed">
+      <div><b>Draft created</b><br>Ready for review</div>
+      <div><b>Mailbox scanned</b><br>just now</div>
+    </div>
+  </aside>
+  <main class="main">
+    <section class="top">
+      <div class="title">
+        <h1>AI Draft Review</h1>
+        <p><span id="subtitle-count">2</span> drafts · <span id="subtitle-mode">pending</span></p>
+        <p>Saved reply drafts appear here. Check each AI suggestion before sending.</p>
+      </div>
+      <div class="metrics">
+        <div class="metric"><small>WEEKLY</small><b>2</b><span class="muted"> inflow</span></div>
+        <div class="metric"><small>SENT</small><b>0</b><span class="muted"> auto & manual</span></div>
+        <div class="metric"><small>SCHEDULED</small><b id="metric-scheduled">0</b><span class="muted"> waiting</span></div>
+      </div>
+    </section>
+    <section class="toolbar">
+      <span class="label">FILTER</span>
+      <div class="filters">
+        <button class="pill active" data-filter="pending">⏳ <span class="text">Pending</span> <span id="pending-count">2</span></button>
+        <button class="pill">✅ <span class="text">Sent</span> 0</button>
+        <button class="pill scheduled" data-filter="scheduled">🕒 <span class="text">Scheduled</span> <span id="scheduled-count">0</span></button>
+        <button class="pill">🗑️ <span class="text">Discarded</span> 0</button>
+        <button class="pill">🗃️ <span class="text">Deleted</span> 0</button>
+      </div>
+      <div class="tools">
+        <button class="tool">Priority first</button>
+        <button class="tool">🌙 Dark</button>
+        <button class="tool">📬 Mailbox</button>
+        <button class="tool search">🔍 Search by sender or subject</button>
+      </div>
+    </section>
+    <section class="active-row">
+      <span>Showing</span><span class="count" id="showing-count">2 of 2 drafts</span><span id="active-label">Pending</span>
+    </section>
+    <section id="cards"></section>
+    <section class="note">
+      <b>How it would work:</b> after you review/edit a reply, click <b>Schedule Send</b>, choose the exact date and time, and confirm. The draft moves out of Pending into Scheduled. At that time the backend worker syncs the latest draft text/attachments, sends through Outlook, then moves it to Sent. Before the time arrives, you can cancel it and bring it back to Pending.
+    </section>
+  </main>
+</div>
+<div class="preview">PREVIEW ONLY</div>
+<script>
+const drafts=[
+  {id:'a',priority:'high',subject:'FW: Bill for your Airtel Mobile 99800XXXXX - September 26',from:'Bishnu Sultania',need:'Director Bishnu forwarded an Airtel mobile bill to Sneha, asking if she is handling the payment and requesting her to process it.',reply:'Dear Mr. Bishnu, I will take care of this payment. I will ensure the Airtel bill of Rs 2,381.28 is processed before the due date on October 1, 2026.',when:null},
+  {id:'b',priority:'medium',subject:'RE: Request for mobile and sim for kolkata office',from:'Bishnu Sultania',need:'Could not classify - review manually',reply:'Dear Sir, I am coordinating with Hemant Sir today to process this and will ensure the mobile and SIM card setup is finalized by tomorrow.',when:null}
+];
+let filter='pending';
+function fmt(dt){return new Date(dt).toLocaleString(undefined,{weekday:'short',day:'2-digit',month:'short',hour:'numeric',minute:'2-digit'});}
+function nextLocal(days=3,hour=9){const d=new Date();d.setDate(d.getDate()+days);d.setHours(hour,0,0,0);return d.toISOString().slice(0,16);}
+function card(d){const scheduled=Boolean(d.when);return `<article class="card ${d.priority==='medium'?'medium':''}">
+  <div class="card-head">
+    <input type="checkbox" aria-label="Select draft">
+    <div class="badges"><span class="badge ${d.priority==='high'?'high':'med'}">${d.priority==='high'?'🔴 High':'🟡 Medium'}</span><span class="badge">⏳ Pending</span>${scheduled?`<span class="badge schedule">🕒 Sends ${fmt(d.when)}</span>`:''}</div>
+    <div class="actions">
+      ${scheduled?`<button class="btn" onclick="cancelSchedule('${d.id}')">Cancel schedule</button>`:`<div class="schedule-wrap"><button class="btn send" onclick="toggleSchedule('${d.id}')">🕒 Schedule Send</button><div class="popover" id="pop-${d.id}"><label for="date-${d.id}">Send this reply on</label><input class="date-input" type="datetime-local" id="date-${d.id}" value="${nextLocal()}"><div class="quick"><button onclick="quick('${d.id}',1,9)">Tomorrow 9 AM</button><button onclick="quick('${d.id}',3,9)">In 3 days</button><button onclick="quick('${d.id}',7,10)">Next week</button><button onclick="quick('${d.id}',0,18)">Today 6 PM</button></div><div class="pop-actions"><button onclick="toggleSchedule('${d.id}')">Cancel</button><button class="confirm" onclick="schedule('${d.id}')">Schedule</button></div></div></div>`}
+      <button class="btn primary">Review reply →</button>
+    </div>
+  </div>
+  <div class="subject">${d.subject}</div><div class="from">From: ${d.from}</div>
+  <div class="row"><b>They need</b><span>${d.need}</span></div><div class="row"><b>AI proposes</b><span>${d.reply}</span></div>
+  <div class="confidence"><span>AI Confidence: 68%</span><div class="bar"><i></i></div></div>
+</article>`}
+function render(){const shown=drafts.filter(d=>filter==='scheduled'?d.when:!d.when);document.getElementById('cards').innerHTML=shown.map(card).join('')||'<div class="note">No drafts in this view.</div>';const scheduled=drafts.filter(d=>d.when).length,pending=drafts.length-scheduled;['pending-count','side-pending'].forEach(id=>document.getElementById(id).textContent=pending);['scheduled-count','side-scheduled','metric-scheduled'].forEach(id=>document.getElementById(id).textContent=scheduled);document.getElementById('subtitle-count').textContent=shown.length;document.getElementById('subtitle-mode').textContent=filter;document.getElementById('showing-count').textContent=`${shown.length} of ${shown.length} drafts`;document.getElementById('active-label').textContent=filter==='scheduled'?'Scheduled':'Pending';document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter));}
+function toggleSchedule(id){document.querySelectorAll('.popover').forEach(p=>{if(p.id!==`pop-${id}`)p.classList.remove('open')});document.getElementById(`pop-${id}`)?.classList.toggle('open');}
+function quick(id,days,hour){document.getElementById(`date-${id}`).value=nextLocal(days,hour);}
+function schedule(id){const input=document.getElementById(`date-${id}`);const when=new Date(input.value);if(!input.value||when<=new Date()){input.reportValidity();return}drafts.find(d=>d.id===id).when=when.toISOString();toast(`Scheduled to send ${fmt(when)}. It moved to the Scheduled filter.`);feed(`Reply scheduled`,fmt(when));filter='scheduled';render();}
+function cancelSchedule(id){const d=drafts.find(x=>x.id===id);d.when=null;toast('Schedule cancelled. Draft is back in Pending.');feed('Schedule cancelled','Back to Pending');filter='pending';render();}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800);}
+function feed(a,b){document.getElementById('feed').insertAdjacentHTML('afterbegin',`<div><b>${a}</b><br>${b}</div>`);}
+document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;render()});document.addEventListener('click',e=>{if(!e.target.closest('.schedule-wrap'))document.querySelectorAll('.popover').forEach(p=>p.classList.remove('open'))});render();
+</script>
+</body>
+</html>
