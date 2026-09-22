@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Email Agent — Filter Grid Preview</title>
+  <meta name="description" content="Review, edit, and approve AI-generated email replies before they are sent." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=20260922-card-schedule" />
+  <link rel="stylesheet" href="toolbar-layout.css?v=20260922-filter-text-gap-2" />
+  <link rel="stylesheet" href="filter-grid-preview.css?v=20260922-real-dashboard-demo" />
+  <link rel="stylesheet" href="review.css?v=20260921-16" />
+</head>
+<body class="filter-grid-demo">
+
+  <!-- ─── Sidebar ─────────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">🤖</span>
+        <div class="logo-text">
+          <span class="logo-title">AI Email Agent</span>
+          <span class="logo-subtitle">Draft Review</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Filter (Clear on the right of Filter by date) -->
+    <div class="date-filter">
+      <div class="date-filter-top">
+        <label for="filter-date" class="date-filter-label">Filter by date</label>
+        <button type="button" class="date-clear-link" id="clear-date">Clear</button>
+      </div>
+      <div class="date-mode-tabs" role="group" aria-label="Date filter mode">
+        <button type="button" class="date-mode-btn" data-date-mode="today">Today</button>
+        <button type="button" class="date-mode-btn active" data-date-mode="single">Date</button>
+        <button type="button" class="date-mode-btn" data-date-mode="range">Range</button>
+      </div>
+      <div class="date-inputs">
+        <input type="date" id="filter-date" aria-label="Specific date" />
+        <div class="date-range-inputs hidden" id="date-range-inputs">
+          <input type="date" id="filter-date-from" aria-label="From date" />
+          <input type="date" id="filter-date-to" aria-label="To date" />
+        </div>
+      </div>
+      <p class="date-filter-help" id="date-filter-help">Today's drafts</p>
+    </div>
+
+    <!-- Emails by Priority & Type -->
+    <section class="email-overview" aria-labelledby="priority-overview-label">
+      <p class="overview-label" id="priority-overview-label">Emails by priority</p>
+      <div class="priority-grid">
+        <button type="button" class="priority-stat priority-stat-high overview-filter" data-overview-kind="priority" data-overview-value="high"><span id="priority-high">—</span><small>High</small></button>
+        <button type="button" class="priority-stat priority-stat-medium overview-filter" data-overview-kind="priority" data-overview-value="medium"><span id="priority-medium">—</span><small>Medium</small></button>
+        <button type="button" class="priority-stat priority-stat-low overview-filter" data-overview-kind="priority" data-overview-value="low"><span id="priority-low">—</span><small>Low</small></button>
+      </div>
+      <p class="overview-label type-label">Emails by type</p>
+      <div class="type-counts">
+        <button type="button" class="overview-filter" data-overview-kind="type" data-overview-value="banking"><span>🏦 Banking</span><strong id="type-banking">—</strong></button>
+        <button type="button" class="overview-filter" data-overview-kind="type" data-overview-value="customerSupplier"><span>🤝 Customer / supplier issues</span><strong id="type-customer-supplier">—</strong></button>
+        <button type="button" class="overview-filter" data-overview-kind="type" data-overview-value="payments"><span>💳 Payments</span><strong id="type-payments">—</strong></button>
+        <button type="button" class="overview-filter" data-overview-kind="type" data-overview-value="invoices"><span>🧾 Invoices</span><strong id="type-invoices">—</strong></button>
+        <button type="button" class="overview-filter" data-overview-kind="type" data-overview-value="legal"><span>⚖️ Legal matters</span><strong id="type-legal">—</strong></button>
+        <button type="button" class="overview-filter" data-overview-kind="type" data-overview-value="keyContacts"><span>⭐ Key contacts</span><strong id="type-key-contacts">—</strong></button>
+      </div>
+    </section>
+
+    <!-- All Drafts (2x2 Grid) -->
+    <section class="global-draft-summary" aria-labelledby="global-draft-summary-label">
+      <p class="overview-label" id="global-draft-summary-label">All drafts</p>
+      <div class="global-draft-counts-grid">
+        <div class="global-draft-box pending"><span>⏳ Pending</span><strong id="total-pending">—</strong></div>
+        <div class="global-draft-box sent"><span>✅ Sent</span><strong id="total-approved">—</strong></div>
+        <div class="global-draft-box discarded"><span>🗑️ Discarded</span><strong id="total-rejected">—</strong></div>
+        <div class="global-draft-box deleted"><span>🗃️ Deleted</span><strong id="total-deleted">—</strong></div>
+      </div>
+      <p class="global-draft-note"><span id="total-visible">—</span> non-demo drafts overall</p>
+    </section>
+
+    <!-- Activity Log in Sidebar -->
+    <div class="sidebar-section-title">
+      <span>Activity Log</span>
+      <small style="color:#64748b;font-weight:normal" id="feed-status-badge">Live</small>
+    </div>
+    <div class="sidebar-feed" id="sidebar-activity-feed">
+      <div class="feed-item">
+        <span>⚡</span>
+        <div>
+          <strong>Agent active</strong>
+          <div class="feed-time">Listening for mail...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Retry Queue in Sidebar -->
+    <div class="sidebar-section-title" id="retry-queue-title" style="display:none">
+      <span>Retry Queue</span>
+      <small style="color:#fbbf24;font-weight:normal" id="retry-queue-count">0 pending</small>
+    </div>
+    <div class="sidebar-feed" id="sidebar-retry-feed" style="display:none"></div>
+
+    <!-- Agent Settings Nav -->
+    <div class="sidebar-section sidebar-settings-nav">
+      <button class="sidebar-settings-btn" id="settings-open-btn">
+        <span class="btn-icon">⚙️</span>
+        <span class="btn-text">Agent Settings</span>
+      </button>
+    </div>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <div class="agent-status">
+        <span class="status-pulse" id="status-pulse"></span>
+        <span class="status-text" id="status-text">Connecting...</span>
+      </div>
+      <div class="last-updated" id="last-updated">—</div>
+      <button class="refresh-btn" id="refresh-btn" title="Refresh now">
+        <span>↻</span> Refresh
+      </button>
+    </div>
+  </aside>
+
+  <!-- ─── Main Content ─────────────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      
+      <!-- Header Row: Title & Subtitle + Stats Strip -->
+      <div class="topbar-header-row">
+        <div class="topbar-title-block">
+          <h1 class="page-title">AI Draft Review</h1>
+          <span class="page-subtitle" id="inbox-subtitle">Loading drafts...</span>
+          <p class="page-context" id="page-context">Saved reply drafts appear here. Check each AI suggestion before sending.</p>
+          <button type="button" class="mailbox-alert hidden" id="mailbox-alert">Mailbox needs attention <span>Reconnect</span></button>
+          <div class="saved-view-note hidden" id="saved-view-note">Filters and sorting saved for your next visit</div>
+        </div>
+
+        <!-- Stats Box: Weekly, Sent, Avg Conf, Edits -->
+        <div class="header-stats-strip">
+          <!-- Stat 1: Weekly -->
+          <div class="header-stat-box">
+            <div class="header-stat-text">
+              <span class="header-stat-label">WEEKLY</span>
+              <strong class="header-stat-val" id="stat-weekly-val">—</strong>
+              <span class="header-stat-sub" id="stat-weekly-sub">inflow</span>
+            </div>
+            <svg id="stat-weekly-chart" width="44" height="22" viewBox="0 0 44 22" fill="none" aria-label="Drafts created on each of the last seven days">
+              <rect data-week-bar x="2" y="21" width="3.5" height="1" rx="1.5" fill="#3b82f6"/>
+              <rect data-week-bar x="8" y="21" width="3.5" height="1" rx="1.5" fill="#3b82f6"/>
+              <rect data-week-bar x="14" y="21" width="3.5" height="1" rx="1.5" fill="#3b82f6"/>
+              <rect data-week-bar x="20" y="21" width="3.5" height="1" rx="1.5" fill="#3b82f6"/>
+              <rect data-week-bar x="26" y="21" width="3.5" height="1" rx="1.5" fill="#3b82f6"/>
+              <rect data-week-bar x="32" y="21" width="3.5" height="1" rx="1.5" fill="#3b82f6"/>
+              <rect data-week-bar x="38" y="21" width="3.5" height="1" rx="1.5" fill="#60a5fa"/>
+            </svg>
+          </div>
+
+          <div class="header-stat-sep"></div>
+
+          <!-- Stat 2: Sent -->
+          <div class="header-stat-box">
+            <div class="header-stat-text">
+              <span class="header-stat-label">SENT</span>
+              <strong class="header-stat-val" id="stat-sent-val">—</strong>
+              <span class="header-stat-sub" id="stat-sent-sub">auto &amp; manual</span>
+            </div>
+            <svg width="24" height="24" viewBox="0 0 36 36" style="transform:rotate(-90deg)">
+              <circle cx="18" cy="18" r="13" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4.5"/>
+              <circle id="stat-sent-ring" cx="18" cy="18" r="13" fill="none" stroke="#10b981" stroke-width="4.5" stroke-dasharray="0 82"/>
+            </svg>
+          </div>
+
+          <div class="header-stat-sep"></div>
+
+          <!-- Stat 3: Avg Conf -->
+          <div class="header-stat-box">
+            <div class="header-stat-text">
+              <span class="header-stat-label">AVG CONF</span>
+              <strong class="header-stat-val conf" id="stat-conf-val">—</strong>
+              <span class="header-stat-sub" id="stat-conf-sub">target ≥85%</span>
+            </div>
+            <svg width="26" height="24" viewBox="0 0 36 32">
+              <path d="M 6 28 A 13 13 0 1 1 30 28" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4" stroke-linecap="round"/>
+              <path id="stat-conf-ring" d="M 6 28 A 13 13 0 1 1 30 28" pathLength="100" fill="none" stroke="#fbbf24" stroke-width="4" stroke-linecap="round" stroke-dasharray="0 100"/>
+            </svg>
+          </div>
+
+          <div class="header-stat-sep"></div>
+
+          <!-- Stat 4: Edits -->
+          <div class="header-stat-box">
+            <div class="header-stat-text">
+              <span class="header-stat-label">EDITS</span>
+              <strong class="header-stat-val edits" id="stat-edits-val">—</strong>
+              <span class="header-stat-sub" id="stat-edits-sub">of sent changed</span>
+            </div>
+            <svg width="42" height="20" viewBox="0 0 42 20" fill="none">
+              <rect x="1" y="7" width="40" height="6" rx="3" fill="rgba(255,255,255,0.08)"/>
+              <rect id="stat-edits-bar" x="1" y="7" width="0" height="6" rx="3" fill="#8ab4ff"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls Unified Row: Filter buttons on Left, Tools + Theme on Right -->
+      <div class="controls-unified-row">
+        <div class="controls-left-filters">
+          <span class="filter-label-text">FILTER</span>
+          <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="pending" id="filter-pending">
+              <span class="filter-icon">⏳</span> Pending <span class="filter-count">0</span>
+            </button>
+            <button class="filter-btn" data-filter="approved" id="filter-approved">
+              <span class="filter-icon">✅</span> Sent <span class="filter-count">0</span>
+            </button>
+            <button class="filter-btn" data-filter="rejected" id="filter-rejected">
+              <span class="filter-icon">🗑️</span> Discarded <span class="filter-count">0</span>
+            </button>
+            <button class="filter-btn" data-filter="deleted" id="filter-deleted">
+              <span class="filter-icon">🗃️</span> Deleted <span class="filter-count">0</span>
+            </button>
+            <button class="filter-btn" data-filter="snoozed" id="filter-snoozed">
+              <span class="filter-icon">💤</span> Snoozed <span class="filter-count">0</span>
+            </button>
+            <button class="filter-btn" data-filter="scheduled" id="filter-scheduled">
+              <span class="filter-icon">🕒</span> Scheduled <span class="filter-count">0</span>
+            </button>
+          </div>
+          <label class="select-all-drafts hidden" id="select-all-drafts">
+            <input type="checkbox" id="select-all-drafts-input" />
+            <span>Select all</span>
+          </label>
+        </div>
+
+        <div class="controls-right-tools">
+          <div class="sort-control" style="display:flex;align-items:center;gap:6px">
+            <label for="sort-drafts" style="font-size:12px;color:var(--text-secondary)">Sort by</label>
+            <select id="sort-drafts" style="background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-bright);border-radius:7px;padding:5px 10px;font-size:12px">
+              <option value="priority">Priority first</option>
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+            </select>
+          </div>
+
+          <button class="refresh-btn" id="refresh-btn-top" title="Refresh now" style="width:auto;padding:6px 10px;margin:0">
+            <span>↻</span>
+          </button>
+
+          <!-- Dark / Light Theme Toggle Button -->
+          <button class="mailbox-link" id="theme-toggle-btn" title="Toggle Light / Dark Mode" style="display:flex;align-items:center;gap:5px;cursor:pointer;padding:6px 12px;font-size:12px">
+            <span id="theme-toggle-icon">🌙</span> <span id="theme-toggle-text">Dark</span>
+          </button>
+
+          <a class="mailbox-link" href="inbox.html" style="padding:6px 12px;font-size:12px">📬 Mailbox</a>
+          <button class="mailbox-link" id="logout-btn" title="Lock dashboard" style="display:flex;align-items:center;gap:5px;cursor:pointer;padding:6px 12px;font-size:12px;border:1px solid var(--border-bright);background:transparent;color:var(--text-primary)">
+            <span>🔒</span> Lock
+          </button>
+
+          <div class="search-wrap" style="margin:0">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              id="search-input"
+              class="search-input"
+              placeholder="Search by sender or subject..."
+              style="padding:6px 12px 6px 30px;font-size:12px"
+            />
+          </div>
+
+          <button class="stop-btn" id="stop-agent-btn" title="Stop AI Agent completely" style="margin:0;padding:6px 13px;font-size:12px">
+            <span class="btn-icon">🛑</span>
+            <span class="btn-text">Stop Agent</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="active-filter-row hidden" id="active-filter-row" aria-label="Active filters"></div>
+
+    <!-- Draft List -->
+    <div class="draft-list" id="draft-list">
+      <div class="loading-state" id="loading-state">
+        <div class="spinner"></div>
+        <p>Loading drafts...</p>
+      </div>
+      <div class="empty-state hidden" id="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No drafts here</h3>
+        <p>The AI agent will populate drafts as new emails arrive.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ─── Settings Modal ───────────────────────────────────────────── -->
+  <div class="modal-overlay hidden" id="settings-overlay">
+    <div class="modal modal-settings" id="settings-modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <div class="modal-meta">
+          <h2 class="modal-subject">⚙️ Agent Settings</h2>
+          <div class="modal-from">Configure AI engine, tone, security, auto-approval &amp; themes</div>
+        </div>
+        <button class="modal-close" id="settings-close-btn" aria-label="Close">✕</button>
+      </div>
+
+      <div class="modal-body settings-body">
+        <form id="settings-form" class="settings-form">
+          
+          <!-- 1. Color Theme Preset -->
+          <div class="setting-group" id="setting-theme-group">
+            <label class="setting-label">🎨 Dashboard Color Theme</label>
+            <div class="theme-options-grid">
+              <div class="theme-option active" data-theme="dark" aria-label="Indigo" title="Indigo" onclick="selectDashboardTheme('dark')"><span class="theme-dot" style="background:#6366f1"></span></div>
+              <div class="theme-option" data-theme="cyan" aria-label="Cyan" title="Cyan" onclick="selectDashboardTheme('cyan')"><span class="theme-dot" style="background:#00e5ff"></span></div>
+              <div class="theme-option" data-theme="amber" aria-label="Amber" title="Amber" onclick="selectDashboardTheme('amber')"><span class="theme-dot" style="background:#ffb300"></span></div>
+              <div class="theme-option" data-theme="emerald" aria-label="Emerald" title="Emerald" onclick="selectDashboardTheme('emerald')"><span class="theme-dot" style="background:#10b981"></span></div>
+              <div class="theme-option" data-theme="blue" aria-label="Blue" title="Blue" onclick="selectDashboardTheme('blue')"><span class="theme-dot" style="background:#3b82f6"></span></div>
+              <div class="theme-option" data-theme="violet" aria-label="Violet" title="Violet" onclick="selectDashboardTheme('violet')"><span class="theme-dot" style="background:#8b5cf6"></span></div>
+              <div class="theme-option" data-theme="purple" aria-label="Purple" title="Purple" onclick="selectDashboardTheme('purple')"><span class="theme-dot" style="background:#a855f7"></span></div>
+              <div class="theme-option" data-theme="fuchsia" aria-label="Fuchsia" title="Fuchsia" onclick="selectDashboardTheme('fuchsia')"><span class="theme-dot" style="background:#d946ef"></span></div>
+              <div class="theme-option" data-theme="pink" aria-label="Pink" title="Pink" onclick="selectDashboardTheme('pink')"><span class="theme-dot" style="background:#ec4899"></span></div>
+              <div class="theme-option" data-theme="rose" aria-label="Rose" title="Rose" onclick="selectDashboardTheme('rose')"><span class="theme-dot" style="background:#f43f5e"></span></div>
+              <div class="theme-option" data-theme="red" aria-label="Red" title="Red" onclick="selectDashboardTheme('red')"><span class="theme-dot" style="background:#ef4444"></span></div>
+              <div class="theme-option" data-theme="orange" aria-label="Orange" title="Orange" onclick="selectDashboardTheme('orange')"><span class="theme-dot" style="background:#f97316"></span></div>
+              <div class="theme-option" data-theme="yellow" aria-label="Yellow" title="Yellow" onclick="selectDashboardTheme('yellow')"><span class="theme-dot" style="background:#eab308"></span></div>
+              <div class="theme-option" data-theme="lime" aria-label="Lime" title="Lime" onclick="selectDashboardTheme('lime')"><span class="theme-dot" style="background:#84cc16"></span></div>
+              <div class="theme-option" data-theme="green" aria-label="Green" title="Green" onclick="selectDashboardTheme('green')"><span class="theme-dot" style="background:#22c55e"></span></div>
+              <div class="theme-option" data-theme="teal" aria-label="Teal" title="Teal" onclick="selectDashboardTheme('teal')"><span class="theme-dot" style="background:#14b8a6"></span></div>
+              <div class="theme-option" data-theme="sky" aria-label="Sky" title="Sky" onclick="selectDashboardTheme('sky')"><span class="theme-dot" style="background:#0ea5e9"></span></div>
+              <div class="theme-option" data-theme="slate" aria-label="Slate" title="Slate" onclick="selectDashboardTheme('slate')"><span class="theme-dot" style="background:#94a3b8"></span></div>
+              <div class="theme-option" data-theme="copper" aria-label="Copper" title="Copper" onclick="selectDashboardTheme('copper')"><span class="theme-dot" style="background:#c26d3b"></span></div>
+              <div class="theme-option" data-theme="gold" aria-label="Gold" title="Gold" onclick="selectDashboardTheme('gold')"><span class="theme-dot" style="background:#d4af37"></span></div>
+            </div>
+          </div>
+
+          <!-- 2. AI Provider & Model -->
+          <div class="setting-group" id="setting-ai-group">
+            <label class="setting-label" for="setting-ai-model">🤖 AI Provider &amp; Engine</label>
+            <select id="setting-ai-model" class="setting-input">
+              <option value="openrouter">OpenRouter (multiple model providers)</option>
+              <option value="openai">OpenAI (GPT-4o / GPT-4o-mini)</option>
+              <option value="gemini">Google Gemini</option>
+              <option value="claude">Anthropic Claude (Claude 3.5 Sonnet)</option>
+            </select>
+            <span class="setting-help">Select the LLM engine used for generating smart email responses.</span>
+            <label class="setting-label" for="setting-openrouter-model">OpenRouter model slug</label>
+            <input id="setting-openrouter-model" class="setting-input" value="google/gemini-2.5-flash" placeholder="provider/model-name" autocomplete="off" />
+            <span class="setting-help">Used only when OpenRouter is selected. Copy a model slug from the OpenRouter model catalog.</span>
+          </div>
+
+          <!-- 3. Tone & Name -->
+          <div class="setting-group" id="setting-tone-group">
+            <label class="setting-label" for="setting-tone">✍️ Default Reply Tone</label>
+            <select id="setting-tone" class="setting-input">
+              <option value="professional">Professional &amp; Direct</option>
+              <option value="casual">Casual &amp; Friendly</option>
+              <option value="formal">Formal &amp; Corporate</option>
+              <option value="concise">Ultra-Concise</option>
+            </select>
+          </div>
+
+          <!-- 4. Security & Sound FX -->
+          <div class="setting-group" id="setting-security-group">
+            <label class="setting-label">🛡️ Security &amp; Sound FX</label>
+            <div class="setting-checkboxes">
+              <label class="checkbox-label">
+                <input type="checkbox" id="setting-sound-fx" checked />
+                <span>Audio Feedback Chimes</span>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="setting-pin-security" checked />
+                <span>Enforce PIN Code Security</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-group" id="setting-pin-group">
+            <label class="setting-label" for="setting-pin-code">Executive PIN Code</label>
+            <input type="password" id="setting-pin-code" class="setting-input" minlength="4" maxlength="12" pattern="[0-9]{4,12}" placeholder="Unchanged" style="width:120px;letter-spacing:3px;text-align:center;" />
+          </div>
+
+          <!-- 5. Polling & Auto-Approval -->
+          <div class="setting-group" id="setting-interval-group">
+            <label class="setting-label" for="setting-interval">⏱️ Inbox Polling Interval (seconds)</label>
+            <input type="number" id="setting-interval" class="setting-input" min="30" max="3600" step="30" value="120" />
+          </div>
+
+          <div class="setting-group" id="setting-auto-approve-group">
+            <label class="setting-label" for="setting-auto-approve">🚀 Auto-Approval Threshold</label>
+            <select id="setting-auto-approve" class="setting-input">
+              <option value="false">Require Manual Confirmation (Draft Mode - Recommended)</option>
+              <option value="true">Auto-Send High Confidence Replies (85%+)</option>
+            </select>
+          </div>
+
+          <!-- 6. Persistent Memory Rules -->
+          <div class="setting-group" id="setting-instructions-group">
+            <label class="setting-label" for="setting-instructions">🧠 Custom Context &amp; Rules</label>
+            <textarea id="setting-instructions" class="setting-input" rows="3" placeholder="e.g. Always offer Tuesdays or Thursdays for meetings. Never sign contracts over $10k without review."></textarea>
+            <span class="setting-help">Persistent instructions remembered by the AI for all incoming emails.</span>
+          </div>
+
+          <!-- 7. Email Platforms -->
+          <div class="setting-group" id="setting-platforms-group">
+            <label class="setting-label">⚡ Connected Email Platforms</label>
+            <div class="setting-checkboxes">
+              <label class="checkbox-label">
+                <input type="checkbox" id="setting-outlook" checked />
+                <span>Outlook / MS 365</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 8. VIP Sender Allowlist -->
+          <div class="setting-group" id="setting-vip-group">
+            <label class="setting-label" for="setting-vip-contacts">⭐ VIP Sender Allowlist</label>
+            <textarea id="setting-vip-contacts" class="setting-input" rows="2" placeholder="e.g. sarah.jenkins@acmecorp.com, boss@company.com, *@boardroom.co"></textarea>
+            <span class="setting-help">Comma-separated emails or domains that receive gold VIP priority tags.</span>
+          </div>
+
+          <div class="settings-actions">
+            <button type="submit" class="btn-save-settings" id="btn-save-settings">💾 Save Settings</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ─── Draft Detail Modal ────────────────────────────────────────── -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+
+      <div class="modal-header">
+        <div class="modal-meta">
+          <div class="modal-badges" id="modal-badges"></div>
+          <h2 class="modal-subject" id="modal-subject">Email Subject</h2>
+          <div class="modal-from" id="modal-from">From: sender@example.com</div>
+        </div>
+
+        <div class="modal-header-actions" id="modal-footer">
+          <button class="btn-reject" id="btn-reject">🗑️ Discard</button>
+          <button class="btn-approve" id="btn-approve">
+            <span class="btn-icon">✈️</span>
+            <span>Send Reply</span>
+          </button>
+          <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <!-- Compact AI Classification Banner at Top -->
+        <div class="meta-strip" id="modal-meta"></div>
+
+        <!-- Original Email -->
+        <div class="panel panel-original">
+          <div class="panel-header">
+            <span class="panel-icon">📩</span>
+            <span class="panel-title">Original Email</span>
+          </div>
+          <div class="panel-content original-body" id="modal-original"></div>
+        </div>
+
+        <!-- AI Reply -->
+        <div class="panel panel-reply">
+          <div class="panel-header">
+            <span class="panel-icon">🧠</span>
+            <span class="panel-title">AI Reply</span>
+            <button class="edit-toggle-btn" id="edit-toggle-btn">✏️ Edit</button>
+          </div>
+          <div class="panel-content ai-reply-view" id="modal-ai-reply"></div>
+          <textarea class="ai-reply-editor hidden" id="modal-ai-editor" rows="10"
+            placeholder="Edit the AI reply here..."></textarea>
+          <div class="editor-actions hidden" id="editor-actions">
+            <button class="btn-save-edit" id="btn-save-edit">💾 Save Edit</button>
+            <button class="btn-cancel-edit" id="btn-cancel-edit">✕ Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Toast Notifications ──────────────────────────────────────── -->
+  <div class="toast-container" id="toast-container"></div>
+  <div class="filter-grid-preview-ribbon">PREVIEW ONLY</div>
+  <div class="toast-popup" id="toast-popup"></div>
+
+  <script src="security.js?v=20260921-16"></script>
+  <script src="app.js?v=20260922-card-schedule"></script>
+  <script src="review.js?v=20260921-16"></script>
+</body>
+</html>
