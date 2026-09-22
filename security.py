@@ -15,10 +15,19 @@ def credential_tag(settings):
     return hashlib.sha256(str(pin_hash or fallback).encode()).hexdigest()
 
 
+def configured_pin_present(settings):
+    return bool(
+        os.getenv('DASHBOARD_PIN_HASH', '').strip()
+        or os.getenv('DASHBOARD_PIN', '').strip()
+        or settings.get('pin_hash')
+        or settings.get('pin_code')
+    )
+
+
 def pin_security_enabled(settings):
     env_value = os.getenv('DASHBOARD_PIN_SECURITY')
     value = env_value if env_value not in (None, '') else settings.get('pin_security', False)
-    return str(value).lower() in ('1', 'true', 'yes', 'on')
+    return str(value).lower() in ('1', 'true', 'yes', 'on') and configured_pin_present(settings)
 
 
 def configured_pin_valid(settings, supplied):

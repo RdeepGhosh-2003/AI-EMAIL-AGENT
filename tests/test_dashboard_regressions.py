@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 import yaml
 
 from api import server
+from security import pin_security_enabled
 
 
 class OutlookDashboardRegressionTests(unittest.TestCase):
@@ -74,6 +75,16 @@ class ConfigRegressionTests(unittest.TestCase):
         self.assertEqual(response.status_code,200)
         saved=yaml.safe_load(self.config.read_text(encoding="utf-8"))
         self.assertEqual(saved["agent"]["vip_contacts"],["boss@example.com","*@client.com"])
+
+
+class PinSecurityRegressionTests(unittest.TestCase):
+    def test_pin_security_stays_off_when_no_pin_is_configured(self):
+        with patch.dict(os.environ, {"DASHBOARD_PIN_SECURITY": "", "DASHBOARD_PIN_HASH": "", "DASHBOARD_PIN": ""}):
+            self.assertFalse(pin_security_enabled({"pin_security": True}))
+
+    def test_pin_security_activates_when_plain_pin_exists(self):
+        with patch.dict(os.environ, {"DASHBOARD_PIN_SECURITY": "", "DASHBOARD_PIN_HASH": "", "DASHBOARD_PIN": ""}):
+            self.assertTrue(pin_security_enabled({"pin_security": True, "pin_code": "1234"}))
 
 
 if __name__ == "__main__":
