@@ -1,0 +1,67 @@
+body.filter-grid-demo .topbar .filter-label-text {
+  display: none !important;
+}
+
+body.filter-grid-demo .topbar .controls-unified-row {
+  padding-block: 6px;
+}
+
+body.filter-grid-demo .topbar .controls-left-filters {
+  align-items: center;
+  gap: 12px;
+}
+
+body.filter-grid-demo .topbar .filter-buttons {
+  display: grid !important;
+  grid-template-columns: repeat(3, max-content);
+  gap: 4px 10px !important;
+  align-items: center;
+}
+
+body.filter-grid-demo .topbar .controls-unified-row .filter-btn {
+  justify-content: flex-start;
+  min-width: 104px !important;
+  height: 27px;
+  font-size: 12.5px !important;
+  padding: 5px 8px !important;
+  gap: 2px !important;
+}
+
+body.filter-grid-demo .topbar .select-all-drafts {
+  margin-left: 2px;
+}
+
+body.filter-grid-demo .topbar .controls-right-tools {
+  flex-basis: 690px;
+}
+
+.filter-grid-preview-ribbon {
+  position: fixed;
+  right: 16px;
+  bottom: 14px;
+  z-index: 1000;
+  padding: 8px 11px;
+  border: 1px solid rgba(124,58,237,.45);
+  border-radius: 8px;
+  background: rgba(30,24,55,.92);
+  color: #d8ccff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+@media (max-width: 1120px) {
+  body.filter-grid-demo .topbar .filter-buttons {
+    grid-template-columns: repeat(3, minmax(92px, 1fr));
+    width: min(390px, 100%);
+  }
+
+  body.filter-grid-demo .topbar .controls-unified-row .filter-btn {
+    min-width: 0 !important;
+  }
+}
+
+@media (max-width: 720px) {
+  body.filter-grid-demo .topbar .filter-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
