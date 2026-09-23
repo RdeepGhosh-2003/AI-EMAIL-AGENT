@@ -37,7 +37,7 @@ The first install creates a private blank `.env` file on that PC. Do not copy `.
 3. Add `http://localhost` under **Mobile and desktop applications** and allow public client flows.
 4. Add delegated Microsoft Graph permissions `Mail.ReadWrite` and `Mail.Send`.
 5. In the dashboard, open **Agent Settings → Accounts**.
-6. Enter the Application client ID and use `common` as the tenant unless the organization supplies a tenant ID.
+6. Enter the Application client ID and Directory tenant ID from the Microsoft Entra app overview.
 7. Select **Save Microsoft details**, then **Connect Microsoft** and complete sign-in.
 
 An organization may require a Microsoft 365 administrator to approve these delegated permissions.

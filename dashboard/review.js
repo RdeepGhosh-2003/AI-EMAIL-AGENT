@@ -337,10 +337,10 @@ accountSetup.innerHTML = `
   </div>
   <section class="account-card" data-provider="outlook">
     <div class="account-title"><strong>Microsoft Outlook</strong><span class="account-status" id="outlook-account-status">Checking…</span></div>
-    <p>Enter the public Application client ID from Microsoft Entra. Use <strong>common</strong> unless your organization provides a tenant ID.</p>
+    <p>Enter the public Application client ID and Directory tenant ID from Microsoft Entra.</p>
     <div class="account-fields">
       <label>Client ID<input class="setting-input" id="outlook-client-id" autocomplete="off" placeholder="Application client ID"></label>
-      <label>Tenant<input class="setting-input" id="outlook-tenant-id" autocomplete="off" value="common"></label>
+      <label>Tenant<input class="setting-input" id="outlook-tenant-id" autocomplete="off" placeholder="Directory tenant ID"></label>
     </div>
     <div class="account-actions">
       <button type="button" id="save-outlook-config">Save Microsoft details</button>
@@ -363,7 +363,7 @@ async function refreshAccountStatus() {
     status.className = `account-status ${account.connected ? 'connected' : account.state === 'error' ? 'error' : ''}`;
     document.getElementById(`connect-${provider}`).disabled = !account.credentials_ready || account.state === 'connecting';
     if (provider === 'outlook') {
-      document.getElementById('outlook-tenant-id').value = account.tenant || 'common';
+      document.getElementById('outlook-tenant-id').value = account.tenant || '';
       document.getElementById('outlook-client-id').placeholder = account.credentials_ready ? 'Configured — enter only to replace' : 'Application client ID';
     }
   });
@@ -376,7 +376,7 @@ document.getElementById('save-outlook-config').addEventListener('click', async (
   try {
     const response = await fetch(`${API}/accounts/outlook/config`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_id: clientId, tenant_id: document.getElementById('outlook-tenant-id').value.trim() || 'common' })
+      body: JSON.stringify({ client_id: clientId, tenant_id: document.getElementById('outlook-tenant-id').value.trim() })
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Could not save Microsoft details');

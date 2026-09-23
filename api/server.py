@@ -129,11 +129,17 @@ def get_outlook():
 def account_connection_status() -> dict:
     with _ACCOUNT_JOBS_LOCK:
         jobs = copy.deepcopy(_ACCOUNT_JOBS)
+    allowed_domains = [
+        item.strip().lower().lstrip("@")
+        for item in os.getenv("ALLOWED_OUTLOOK_DOMAINS", os.getenv("ALLOWED_OUTLOOK_DOMAIN", "")).split(",")
+        if item.strip()
+    ]
     return {
         "outlook": {
             "credentials_ready": bool(os.getenv("AZURE_CLIENT_ID", "").strip()),
             "connected": OUTLOOK_TOKEN_FILE.is_file(),
-            "tenant": os.getenv("AZURE_TENANT_ID", "").strip() or "common",
+            "tenant": os.getenv("AZURE_TENANT_ID", "").strip(),
+            "allowed_domains": allowed_domains,
             **jobs["outlook"],
         },
     }
@@ -429,10 +435,18 @@ def outlook_signature_status():
 def save_outlook_config():
     data = request.get_json(silent=True) or {}
     client_id = str(data.get("client_id", "")).strip()
-    tenant_id = str(data.get("tenant_id", "")).strip() or "common"
+    tenant_id = str(data.get("tenant_id", "")).strip()
+    allowed_domains = [
+        item.strip().lower().lstrip("@")
+        for item in os.getenv("ALLOWED_OUTLOOK_DOMAINS", os.getenv("ALLOWED_OUTLOOK_DOMAIN", "")).split(",")
+        if item.strip()
+    ]
     identifier = re.compile(r"^[A-Za-z0-9._-]{8,128}$")
     if not identifier.fullmatch(client_id):
         return jsonify(error="Enter a valid Microsoft Application client ID."), 400
+    if allowed_domains and (not tenant_id or tenant_id.lower() == "common"):
+        return jsonify(error="Company-only Microsoft apps need the Directory tenant ID, not common."), 400
+    tenant_id = tenant_id or "common"
     if tenant_id != "common" and not identifier.fullmatch(tenant_id):
         return jsonify(error="Enter a valid tenant ID or use common."), 400
     ENV_FILE.touch(exist_ok=True)

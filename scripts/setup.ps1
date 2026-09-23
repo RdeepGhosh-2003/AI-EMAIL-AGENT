@@ -23,7 +23,7 @@ function Initialize-EnvFile {
             'GEMINI_API_KEY='
             'ANTHROPIC_API_KEY='
             'AZURE_CLIENT_ID='
-            'AZURE_TENANT_ID=common'
+            'AZURE_TENANT_ID='
             'ALLOWED_OUTLOOK_DOMAINS=durgabrgs.com'
             'DASHBOARD_PIN_SECURITY=false'
             'DASHBOARD_PIN_HASH='
