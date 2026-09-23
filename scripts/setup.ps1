@@ -3,10 +3,42 @@ $ProgressPreference = 'SilentlyContinue'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $venvPython = Join-Path $projectRoot '.venv\Scripts\python.exe'
 $logPath = Join-Path $projectRoot 'setup.log'
+$envPath = Join-Path $projectRoot '.env'
+$envExamplePath = Join-Path $projectRoot '.env.example'
 
 function Write-Step([string]$message) {
     Write-Host "`n[AI Email Agent] $message" -ForegroundColor Cyan
     Add-Content -LiteralPath $logPath -Value "$(Get-Date -Format s) $message"
+}
+
+function Initialize-EnvFile {
+    if (Test-Path -LiteralPath $envPath) { return }
+    if (Test-Path -LiteralPath $envExamplePath) {
+        Copy-Item -LiteralPath $envExamplePath -Destination $envPath
+    } else {
+        @(
+            'OPENROUTER_API_KEY='
+            'OPENROUTER_APP_URL='
+            'OPENAI_API_KEY='
+            'GEMINI_API_KEY='
+            'ANTHROPIC_API_KEY='
+            'AZURE_CLIENT_ID='
+            'AZURE_TENANT_ID=common'
+            'DASHBOARD_PIN_SECURITY=false'
+            'DASHBOARD_PIN_HASH='
+            'DASHBOARD_COOKIE_SECURE=false'
+            'DASHBOARD_ALLOWED_HOSTS='
+        ) | Set-Content -LiteralPath $envPath -Encoding UTF8
+    }
+}
+
+function Test-Python([string]$pythonPath, [string[]]$arguments) {
+    try {
+        $probe = & $pythonPath @arguments -c "import sys; raise SystemExit(0 if sys.version_info >= (3, 11) else 1)" 2>$null
+        return $LASTEXITCODE -eq 0
+    } catch {
+        return $false
+    }
 }
 
 function Find-Python {
@@ -16,19 +48,26 @@ function Find-Python {
         (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python311\python.exe')
     )
     foreach ($candidate in $candidates) {
-        if (Test-Path -LiteralPath $candidate) { return $candidate }
+        if ((Test-Path -LiteralPath $candidate) -and (Test-Python $candidate @())) { return @{ Path = $candidate; Args = @() } }
     }
-    foreach ($command in @('py.exe', 'python.exe')) {
+    try {
+        $launcher = (Get-Command 'py.exe' -ErrorAction Stop).Source
+        if (Test-Python $launcher @('-3')) { return @{ Path = $launcher; Args = @('-3') } }
+    } catch { }
+    foreach ($command in @('python.exe')) {
         try {
             $path = (Get-Command $command -ErrorAction Stop).Source
-            & $path --version *> $null
-            if ($LASTEXITCODE -eq 0) { return $path }
+            if (Test-Python $path @()) { return @{ Path = $path; Args = @() } }
         } catch { }
     }
     return $null
 }
 
 try {
+    Set-Content -LiteralPath $logPath -Value "$(Get-Date -Format s) Setup started"
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Initialize-EnvFile
+
     if (-not (Test-Path -LiteralPath $venvPython)) {
         $python = Find-Python
         if (-not $python) {
@@ -45,11 +84,7 @@ try {
         }
 
         Write-Step 'Creating the private application environment...'
-        if ((Split-Path $python -Leaf) -ieq 'py.exe') {
-            & $python -3 -m venv (Join-Path $projectRoot '.venv')
-        } else {
-            & $python -m venv (Join-Path $projectRoot '.venv')
-        }
+        & $python.Path @($python.Args + @('-m', 'venv', (Join-Path $projectRoot '.venv')))
         if ($LASTEXITCODE -ne 0) { throw 'Could not create the application environment.' }
     }
 

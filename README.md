@@ -18,6 +18,18 @@ After setup, double-click `Open_Dashboard`. It starts the background agent if ne
 
 Closing the browser does not stop the agent. Double-click `Open_Dashboard` to reopen it. Use **Stop Agent** in the dashboard when monitoring should end.
 
+## Fresh PC checklist
+
+1. Extract the complete ZIP to a normal folder such as Desktop or Documents.
+2. Double-click `Install_AI_Email_Agent`.
+3. Wait for the setup window to finish and open the dashboard.
+4. In **Agent Settings -> Accounts**, save the Microsoft Application client ID and tenant.
+5. Select **Connect Microsoft** and sign in to the Outlook mailbox that should be monitored.
+6. In **Agent Settings -> AI and Writing**, paste the chosen AI provider key and save.
+7. Optional: set a dashboard PIN in Settings after the app is working.
+
+The first install creates a private blank `.env` file on that PC. Do not copy `.env`, Outlook tokens, or email data from another computer.
+
 ## Configure Microsoft Outlook
 
 1. In Microsoft Entra, create a public desktop app registration.
@@ -38,7 +50,7 @@ Open **Agent Settings → AI and Writing**, select OpenRouter, OpenAI, Google Ge
 
 The main page is a reply-draft queue, not a complete mailbox. It processes unread Outlook messages that appear to need a reply. Use **Mailbox** to read recent Outlook Inbox messages, including messages already marked as read.
 
-PIN protection is enabled in the current local configuration. Unlock the dashboard before viewing drafts or changing settings. Automatic sending is off unless you explicitly enable it.
+PIN protection is optional and is configured per computer from Settings. Automatic sending is off unless you explicitly enable it.
 
 When a matching Classic Outlook reply signature exists on this Windows profile, the app appends it to Outlook drafts and includes inline signature images. The review window shows whether a signature match was found for the connected mailbox.
 
@@ -59,9 +71,12 @@ Never share or commit:
 
 | Problem | Resolution |
 |---|---|
-| Dashboard does not open | Extract the complete ZIP, run `Install_AI_Email_Agent`, and allow the first-run download to finish. See `setup.log` if it fails. |
+| Dashboard does not open | Extract the complete ZIP, run `Install_AI_Email_Agent`, and allow the first-run download to finish. See `setup.log` in the app folder if it fails. |
+| Setup says Python or components could not install | Check internet access, antivirus/firewall prompts, and `setup.log`. The installer downloads Python and Python packages during first setup. |
+| Dashboard asks for a PIN on a new PC | Use the latest ZIP. Fresh installs start without a PIN; set a new PIN only after setup is complete. |
 | Connect Microsoft is disabled | Save a valid Microsoft Application client ID first. |
 | Microsoft requests administrator approval | Ask the organization's Microsoft 365 administrator to approve `Mail.ReadWrite` and `Mail.Send`. |
+| Connected account has no mails in dashboard | The main dashboard shows reply drafts, not every mailbox item. Use **Mailbox** to view recent inbox emails. |
 | Main dashboard is empty | New reply drafts are created only from unread messages that need responses. Check **Mailbox** for all recent messages. |
 | Authorization expired | Open **Agent Settings → Accounts** and select **Connect Microsoft** again. |
 

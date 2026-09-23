@@ -14,7 +14,7 @@ agent:
   max_emails_per_check: 10
   auto_approve: false
   sound_fx: true
-  pin_security: true
+  pin_security: false
   theme: slate
   retry_max_attempts: 3
   snooze_enabled: true
