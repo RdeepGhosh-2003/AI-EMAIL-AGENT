@@ -14,7 +14,7 @@ class OutlookAuthTests(unittest.TestCase):
         self.path = Path(self.directory.name) / 'cache.json'
         for patcher in (
             patch.object(auth, 'TOKEN_PATH', self.path),
-            patch.dict(os.environ, {'AZURE_CLIENT_ID': 'test-id', 'AZURE_TENANT_ID': ''}),
+            patch.dict(os.environ, {'AZURE_CLIENT_ID': 'test-id', 'AZURE_TENANT_ID': '', 'ALLOWED_OUTLOOK_DOMAINS': ''}),
         ):
             patcher.start()
             self.addCleanup(patcher.stop)
@@ -38,13 +38,29 @@ class OutlookAuthTests(unittest.TestCase):
         )
         self.app.acquire_token_interactive.assert_not_called()
 
+    def test_company_domain_account_is_allowed(self):
+        account = {'home_account_id': 'test', 'username': 'pc@durgabrgs.com'}
+        self.app.get_accounts.return_value = [account]
+        self.app.acquire_token_silent.return_value = {'access_token': 'test-token'}
+        with patch.dict(os.environ, {'ALLOWED_OUTLOOK_DOMAINS': 'durgabrgs.com'}):
+            self.assertEqual(auth.get_outlook_token(), 'test-token')
+
+    def test_non_company_domain_account_is_blocked(self):
+        account = {'home_account_id': 'test', 'username': 'someone@example.com'}
+        self.app.get_accounts.return_value = [account]
+        self.app.acquire_token_silent.return_value = {'access_token': 'test-token'}
+        with patch.dict(os.environ, {'ALLOWED_OUTLOOK_DOMAINS': 'durgabrgs.com'}):
+            with self.assertRaisesRegex(PermissionError, 'Only company Outlook accounts'):
+                auth.get_outlook_token()
+
     def test_explicit_setup_and_persistence(self):
         def authorize(**kwargs):
             cache = self.factory.call_args.kwargs['token_cache']
             cache.has_state_changed = True
-            return {'access_token': 'test-token'}
+            return {'access_token': 'test-token', 'id_token_claims': {'preferred_username': 'pc@durgabrgs.com'}}
         self.app.acquire_token_interactive.side_effect = authorize
-        self.assertEqual(auth.get_outlook_token(interactive=True), 'test-token')
+        with patch.dict(os.environ, {'ALLOWED_OUTLOOK_DOMAINS': 'durgabrgs.com'}):
+            self.assertEqual(auth.get_outlook_token(interactive=True), 'test-token')
         self.assertTrue(self.path.exists())
         self.assertFalse(self.path.with_suffix('.tmp').exists())
         self.assertEqual(

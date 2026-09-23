@@ -33,7 +33,7 @@ The first install creates a private blank `.env` file on that PC. Do not copy `.
 ## Configure Microsoft Outlook
 
 1. In Microsoft Entra, create a public desktop app registration.
-2. Support the required organizational or personal Microsoft account types.
+2. Set supported account types to the Durga Bearings organization only when this app should be used only by company staff.
 3. Add `http://localhost` under **Mobile and desktop applications** and allow public client flows.
 4. Add delegated Microsoft Graph permissions `Mail.ReadWrite` and `Mail.Send`.
 5. In the dashboard, open **Agent Settings → Accounts**.
@@ -41,6 +41,8 @@ The first install creates a private blank `.env` file on that PC. Do not copy `.
 7. Select **Save Microsoft details**, then **Connect Microsoft** and complete sign-in.
 
 An organization may require a Microsoft 365 administrator to approve these delegated permissions.
+
+The shared package also enforces `ALLOWED_OUTLOOK_DOMAINS=durgabrgs.com`, so only Outlook accounts ending in `@durgabrgs.com` can be used by the agent.
 
 ## Configure the AI provider
 

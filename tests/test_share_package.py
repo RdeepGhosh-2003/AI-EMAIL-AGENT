@@ -15,6 +15,7 @@ class SharePackageTests(unittest.TestCase):
     def test_env_template_is_blank_and_outlook_only(self):
         template = (create_share_package.ROOT / ".env.example").read_text(encoding="utf-8")
         self.assertIn("AZURE_CLIENT_ID=", template)
+        self.assertIn("ALLOWED_OUTLOOK_DOMAINS=durgabrgs.com", template)
         self.assertIn("DASHBOARD_PIN_SECURITY=false", template)
         self.assertNotIn("Gmail", template)
         self.assertNotIn("sk-or-v1-...", template)

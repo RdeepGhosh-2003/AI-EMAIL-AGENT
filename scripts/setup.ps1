@@ -24,6 +24,7 @@ function Initialize-EnvFile {
             'ANTHROPIC_API_KEY='
             'AZURE_CLIENT_ID='
             'AZURE_TENANT_ID=common'
+            'ALLOWED_OUTLOOK_DOMAINS=durgabrgs.com'
             'DASHBOARD_PIN_SECURITY=false'
             'DASHBOARD_PIN_HASH='
             'DASHBOARD_COOKIE_SECURE=false'
