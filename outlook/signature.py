@@ -41,14 +41,17 @@ def cached_account(cache_path: Path | None = None) -> str:
 
 
 def find_reply_signature(account: str, root: Path | None = None) -> Path | None:
-    """Return only a reply signature explicitly belonging to account; never cross accounts."""
+    """Return the matching reply signature, with a safe single-signature fallback."""
     account = account.strip().lower()
     root = root or signature_root()
     if not account or not root.is_dir():
         return None
-    candidates = [p for p in root.glob("*.htm") if account in p.stem.lower()]
+    all_signatures = sorted(root.glob("*.htm"), key=lambda p: p.name.lower())
+    candidates = [p for p in all_signatures if account in p.stem.lower()]
     reply = [p for p in candidates if re.search(r"(^|[ _(-])repl(y|ies)([ _)\-]|$)", p.stem, re.I)]
-    return sorted(reply or candidates, key=lambda p: p.name.lower())[0] if (reply or candidates) else None
+    if reply or candidates:
+        return sorted(reply or candidates, key=lambda p: p.name.lower())[0]
+    return all_signatures[0] if len(all_signatures) == 1 else None
 
 
 def load_signature(account: str, root: Path | None = None) -> dict:

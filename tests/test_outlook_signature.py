@@ -24,9 +24,16 @@ class OutlookSignatureTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "Reply (mis@example.com).htm").write_text("MIS", encoding="utf-8")
-            self.assertIsNone(find_reply_signature("pc@example.com", root))
+            self.assertEqual(find_reply_signature("pc@example.com", root).name, "Reply (mis@example.com).htm")
             (root / "Reply (pc@example.com).htm").write_text("PC", encoding="utf-8")
             self.assertEqual(find_reply_signature("pc@example.com", root).name, "Reply (pc@example.com).htm")
+
+    def test_does_not_guess_when_multiple_unmatched_signatures_exist(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "Sales.htm").write_text("Sales", encoding="utf-8")
+            (root / "Support.htm").write_text("Support", encoding="utf-8")
+            self.assertIsNone(find_reply_signature("pc@example.com", root))
 
     def test_rewrites_local_images_as_inline_cid_attachments(self):
         with tempfile.TemporaryDirectory() as directory:
